@@ -7,20 +7,26 @@ from sklearn.neural_network import MLPClassifier
 
 def main():
     waveform, sampleRate, bitsPerSample = wav.getRawWaveData("Ltheme2.wav")
-    print "There are", len(waveform), "channels"
-    print "Sample rate is", sampleRate
-    print "BitsPerSample is", bitsPerSample
-    r = summationSquared(waveform)
-    print len(waveform[0])
-    print len(r)
+    s2 = summationSquared(waveform)
+    s = summation(waveform)
 
     # Neural Network Configuration
     step = 5
-    length = len(r)
+    length = len(s2)
     clf = MLPClassifier(
         solver="lbfgs",
         alpha=1e-05,
-        hidden_layer_sizes=(5,2),
+
+        # Use Sigmoid activation function
+        activation="logistic",
+
+        learning_rate="constant",
+        learning_rate_init=0.001,
+
+        # Number of neurons per layer
+        hidden_layer_sizes=(25, 25, 25, 25, 25), 
+
+        # PRNG Seed
         random_state=1
     )
 
@@ -30,7 +36,7 @@ def main():
     for frame in xrange(0, length, step):
         pass
 
-# Functions used to aggregate channels
+# Functions used to aggregate amplitudes for multiple channels
 
 # Sum the amplitudes per unit time
 def summation(channels):

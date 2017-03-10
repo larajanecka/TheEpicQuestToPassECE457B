@@ -54,7 +54,7 @@ def getRawWaveData(filename):
 
 def playWindowsFile(filename):
         import winsound	# Windows sound stuff. Since only for debugging we'll just use this.
-	#winsound.PlaySound(filename, winsound.SND_FILENAME)
+	winsound.PlaySound(filename, winsound.SND_FILENAME)
 
 # TODO: Lets consider making a killable thread to make debugging easier
 def playFileAsync(filename):
