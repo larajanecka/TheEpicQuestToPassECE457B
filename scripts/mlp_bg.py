@@ -1,6 +1,8 @@
-import wavParser as wav
+import logging
 import mirex
 from sklearn.neural_network import MLPClassifier
+
+import wavParser as wav
 
 # This program uses a multilayer perceptron in an attempt to identify beats in songs
 # The feature used from audio files are the aggregate of the amplitudes of multiple
@@ -35,22 +37,24 @@ def get_training_input(wav_file, aggregate_waveform):
     return inputs            
 
 def main():
-    
+    logging.basicConfig(level=logging.INFO)    
     # Retrieve Wav files, Generate training set
+    logging.info("Retrieving dataset...")
     wavfiles = mirex.get_mirex_wav_files("datasets/train")
+    logging.info("Retrieved {} wav files".format(len(wavfiles)))
+
     features = []
     samples = []
     for w in wavfiles:
-        print w.absoluteName
+        logging.info("Aggregating channels for {}".format(w.absoluteName))
         k = summationSquared(w.waveform)
         t = get_training_input(w, k)
         for j in t:
-            features.append(j[0])
-            samples.append(j[1])
-
-    print len(features)
-    print len(samples)
-    print samples
+            # Each feature needs the same number entries in its array
+            # The final feature extracted from a WAV file may be shorter, thus remove it
+            if len(j[0]) == 1000:
+                features.append(j[0])
+                samples.append(j[1])
 
     # Neural Network Configuration
     step = 5
@@ -72,6 +76,7 @@ def main():
     )
 
     # Train
+    logging.info("Fitting MLP with {} features and {} samples".format(len(features), len(samples)))
     clf.fit(features, samples)
 
     # Test predictions
