@@ -37,7 +37,8 @@ def get_training_input(wav_file, aggregate_waveform):
     return inputs            
 
 def main():
-    logging.basicConfig(level=logging.INFO)    
+    logging.basicConfig(level=logging.INFO)
+
     # Retrieve Wav files, Generate training set
     logging.info("Retrieving dataset...")
     wavfiles = mirex.get_mirex_wav_files("datasets/train")
