@@ -1,7 +1,8 @@
 import logging
-import mirex
+import random
 from sklearn.neural_network import MLPClassifier
 
+import mirex
 import wavParser as wav
 
 # This program uses a multilayer perceptron in an attempt to identify beats in songs
@@ -81,7 +82,9 @@ def main():
     clf.fit(features, samples)
 
     # Test predictions
-    # TODO
+    for i in xrange(0,100):
+        idx = random.randint(0, len(features) - 1)
+        print "Desired {} vs. actual {}".format(samples[idx], clf.predict([features[idx]]))
 
 if __name__ == "__main__":
     main()

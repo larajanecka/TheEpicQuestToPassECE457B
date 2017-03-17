@@ -11,3 +11,7 @@
 BEATTRACK_DATASET="http://www.music-ir.org/evaluation/MIREX/data/2006/beat/beattrack_train_2006.tgz"
 wget --user beattrack --password b34trx $BEATTRACK_DATASET
 tar -zxvf beattrack_train_2006.tgz
+
+https://labrosa.ee.columbia.edu/millionsong/pages/getting-dataset#subset
+MILLIONSONG_DATASET="http://static.echonest.com/millionsongsubset_full.tar.gz"
+wget $MILLIONSONG_DATASET
