@@ -16,3 +16,4 @@
 # https://labrosa.ee.columbia.edu/millionsong/pages/getting-dataset#subset
 MILLIONSONG_DATASET="http://static.echonest.com/millionsongsubset_full.tar.gz"
 wget $MILLIONSONG_DATASET
+tar -zxvf millionsongsubset_full.tar.gz
