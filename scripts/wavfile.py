@@ -8,7 +8,7 @@ import wavParser as wav
 def get_wav_file(wav_file_name, beat_file_name, files):
     beats = []
     with open(beat_file_name, "r") as beat_file:
-        beats = beat_file.readline().rstrip().split("\t") 
+        beats = beat_file.readline().rstrip().split(",") 
 
     waveform, samplingRate, bitsPerSample = wav.getRawWaveData(wav_file_name)
     files.append(WavFile(wav_file_name, waveform, samplingRate, bitsPerSample, beats))

@@ -2,7 +2,7 @@ import logging
 import random
 from sklearn.neural_network import MLPClassifier
 
-import mirex
+import wavfile 
 import wavParser as wav
 
 # This program uses a multilayer perceptron in an attempt to identify beats in songs
@@ -42,7 +42,7 @@ def main():
 
     # Retrieve Wav files, Generate training set
     logging.info("Retrieving dataset...")
-    wavfiles = mirex.get_wav_files("out/")
+    wavfiles = wavfile.get_wav_files("out/")
     logging.info("Retrieved {} wav files".format(len(wavfiles)))
 
     features = []
