@@ -3,3 +3,6 @@ gmusicapi
 pyopenssl
 ndg-httpsclient
 pyasn1
+scipy
+matplotlib
+numpy
