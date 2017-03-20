@@ -42,7 +42,7 @@ def main():
 
     # Retrieve Wav files, Generate training set
     logging.info("Retrieving dataset...")
-    wavfiles = mirex.get_mirex_wav_files("datasets/train")
+    wavfiles = mirex.get_wav_files("out/")
     logging.info("Retrieved {} wav files".format(len(wavfiles)))
 
     features = []
