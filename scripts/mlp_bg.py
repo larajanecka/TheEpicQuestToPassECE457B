@@ -71,7 +71,7 @@ def main():
         learning_rate_init=0.001,
 
         # Number of neurons per layer
-        hidden_layer_sizes=(25, 25, 25, 25, 25), 
+        hidden_layer_sizes=(25, 25, 25),
 
         # PRNG Seed
         random_state=1

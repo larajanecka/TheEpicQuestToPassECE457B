@@ -24,7 +24,9 @@ class GMSongClient():
     def __init__(self):
         email = os.environ['EMAIL']
         pw = os.environ['PASSWORD']
-        self.api = Mobileclient(debug_logging=False)
+
+        # This requires requests-2.2.0
+        self.api = Mobileclient(debug_logging=False, validate=False, verify_ssl=True)
         self.api.login(email, pw, Mobileclient.FROM_MAC_ADDRESS, 'en_us')
 
     # Download a given song to a specified directory
@@ -99,9 +101,13 @@ def main():
             except SongNotFoundException as e:
                 print "Unable to download {}".format(song_name)
                 continue
+            except IOError as e:
+                print "Unable to download {} because of an IOError".format(song_name)
+                continue
 
             # Convert song from mp3 to .wav
             base_filename = output_dir + song_name
+            print "Converting file to .wav..."
             audio_converter.convert_audio_file(base_filename + ".mp3", base_filename + ".wav")
            
             # Write beats file
