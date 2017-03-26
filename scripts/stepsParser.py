@@ -157,19 +157,26 @@ def replicateWavFile(filename, beatSamples):
 		i += 1
 	targetFile.close()
 
-def debug():
-	# Raw data by meassures
-	songFile = "POSSESSION.wav"
-	fileName = 'POSSESSION.sm'
+def getBeatSamples(fileName, sampleRate):
 	stepLists, bpms, stops, offset = getRawStepData(fileName)
 
 	# Consider also parsing a difficulty and including it in this data
 	beatSamples = []
 	for stepList in stepLists:
-		beatSample = getBeatSamplesFromStepList(stepList, bpms, stops, offset, 44100)
+		beatSample = getBeatSamplesFromStepList(stepList, bpms, stops, offset, sampleRate)
 		beatSamples.append(beatSample)
 
-	replicateWavFile(songFile, beatSamples[0])
+	return beatSamples
 
-# debug()
+def debug():
+	# Raw data by meassures
+	songFile = "POSSESSION.wav"
+	fileName = 'POSSESSION.sm'
+	beatSamples = getBeatSamples(fileName, 44100)
+
+	replicateWavFile(songFile, beatSamples[4])
+
+
+
+#debug()
 

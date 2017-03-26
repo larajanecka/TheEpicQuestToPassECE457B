@@ -113,6 +113,23 @@ def getReducedWaveform(originalWaveform, sampleRate, bitsPerSample):
 
 	return outputWaveform, samplesPerFrame
 
+# Reduce number of samples in the original waveform
+def compressWaveForm(originalWaveform, sampleRate, bitsPerSample, newSampleRate):
+	secondDenomination = 1.0/newSampleRate	# How much time for each frame
+
+	# Confusing variable names 
+	samplesPerFrame = int(secondDenomination * sampleRate)
+	frameLength = 0 # How many frame's worth of samples to average for each frame
+	resultingFrames = int(len(originalWaveform) * sampleRate / newSampleRate)
+
+	waveform = []
+	for i in range(0, frameLength + 1):	# First few frames need to be 0 for this algorithm.
+		waveform.append(0)
+	for i in range(frameLength, resultingFrames - frameLength):
+		waveform.append(sum(originalWaveform[samplesPerFrame * (i - frameLength): samplesPerFrame * (i + frameLength + 1)]) / ((1 + 2 * frameLength)* samplesPerFrame))
+
+	return waveform
+
 def debug():
 	filename = "Ltheme2.wav"
 	waveform, sampleRate, bitsPerSample = getRawWaveData(filename)
