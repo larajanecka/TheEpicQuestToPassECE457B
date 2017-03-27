@@ -1,7 +1,6 @@
 # Wav specs http://soundfile.sapp.org/doc/WaveFormat/
 
 import threading
-import winsound	# Windows sound stuff. Since only for debugging we'll just use this.
 from Tkinter import *	# Simple GUI
 import time
 
@@ -54,6 +53,7 @@ def getRawWaveData(filename):
 	return waveform, sampleRate, bitsPerSample
 
 def playWindowsFile(filename):
+        import winsound	# Windows sound stuff. Since only for debugging we'll just use this.
 	winsound.PlaySound(filename, winsound.SND_FILENAME)
 
 # TODO: Lets consider making a killable thread to make debugging easier
