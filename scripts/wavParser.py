@@ -130,6 +130,13 @@ def compressWaveForm(originalWaveform, sampleRate, bitsPerSample, newSampleRate)
 
 	return waveform
 
+def getAbsoluteAmplitude(originalWaveform, bitsPerSample):
+	axis = pow(2, bitsPerSample - 1)
+	newWaveForm = []
+	for o in originalWaveform:
+		newWaveForm.append(abs((o - axis)/ axis))
+	return newWaveForm
+
 def debug():
 	filename = "Ltheme2.wav"
 	waveform, sampleRate, bitsPerSample = getRawWaveData(filename)
