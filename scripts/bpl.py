@@ -8,8 +8,6 @@ class ActivationFunction(object):
 
 	@classmethod
 	def getSigmoid(self, value):
-		if abs(1 / (1 + math.exp(-value))) > 1:
-			import pdb;pdb.set_trace()
 		return 1 / (1 + math.exp(-value))
 		# if value > 0:
 		# 	return 1
@@ -183,7 +181,7 @@ class BPM(object):
 def debug():
 	from wavParser import getRawWaveData, compressWaveForm, getAbsoluteAmplitude
 	from stepsParser import getBeatSamples
-	songFile = "Ltheme2.wav"
+	songFile = "POSSESSION.wav"
 	stepsFile = "POSSESSION.sm"
 	networkSampleRate = 4410 # Sample rate to be used by the network
 	print "reading waveform..."
@@ -212,10 +210,9 @@ def debug():
 		network.exportToFile("networks/%d.net" % epoch)
 		print "epoch %d, \t cumulativeError %s" % (epoch, cumulativeError)
 
-# Takes about 5 min.
 def debugDaniel():
 	from wavParser import getRawWaveData, compressWaveForm, getAbsoluteAmplitude
-	songFile = "Ltheme2.wav"
+	songFile = "POSSESSION.wav"
 	networkSampleRate = 4410 # Sample rate to be used by the network
 	print "reading waveform..."
 	waveform, sampleRate, bitsPerSample = getRawWaveData(songFile)
@@ -223,10 +220,10 @@ def debugDaniel():
 	singleChannel = getAbsoluteAmplitude(singleChannel, bitsPerSample)
 
 	print "Neural net..."
-	network = BPM(filename="networks/32.net")
+	network = BPM(filename="networks/250.net")
 	outputMemberShip = network.getMembershipFromSong(singleChannel)
 
 	# btw this is a very bad outputmembership function, but lets work with this first.
 	import pdb;pdb.set_trace()
 
-debugDaniel()
+#debugDaniel()

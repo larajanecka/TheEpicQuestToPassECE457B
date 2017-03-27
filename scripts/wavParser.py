@@ -120,7 +120,7 @@ def compressWaveForm(originalWaveform, sampleRate, bitsPerSample, newSampleRate)
 	# Confusing variable names 
 	samplesPerFrame = int(secondDenomination * sampleRate)
 	frameLength = 0 # How many frame's worth of samples to average for each frame
-	resultingFrames = int(len(originalWaveform) * sampleRate / newSampleRate)
+	resultingFrames = int(len(originalWaveform) * newSampleRate / sampleRate)
 
 	waveform = []
 	for i in range(0, frameLength + 1):	# First few frames need to be 0 for this algorithm.
