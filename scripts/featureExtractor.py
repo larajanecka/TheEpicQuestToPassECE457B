@@ -1,5 +1,5 @@
 import wavParser
-from math import floor
+from math import floor, ceil
 from scipy.fftpack import fft, fftfreq
 from numpy import sqrt, arctan, pi
 import matplotlib.pyplot as plt
@@ -27,12 +27,8 @@ def sumChannels(waveform):
 def chunkDataAverage(waveform):
 	numSamples = len(waveform)
 	averagedAmplitudes = []
-	for i in range(0, int(floor(numSamples / chunkSize)) - 1):
-		# sum energy level over chunk
-		total = 0
-		for j in range(i, i+chunkSize):
-			total += waveform[j]
-		averagedAmplitudes.append(total / chunkSize)
+	for i in range(0, len(waveform), chunkSize):
+		averagedAmplitudes.append(sum(waveform[i:i+chunkSize]))
 	return averagedAmplitudes
 
 def getVariances(waveform, sampleRate):
@@ -42,26 +38,24 @@ def getVariances(waveform, sampleRate):
 	halfWindowSize =  int(floor(chunksPerSecond/2))
 
 	# building first half window
-	secondWindowSum = 0
-	for i in range(0, chunksPerSecond):
-		secondWindowSum += waveform[i]
+	windowSum = 0
+	for i in range(0, halfWindowSize):
+		windowSum += waveform[i]
 
 	variances = []
+	windowSize = halfWindowSize
 	for i in range(0, numSamples):
-		windowSize = chunksPerSecond
-		if i >= halfWindowSize:
-			windowSize += i
+		if i < halfWindowSize:
+			windowSum += waveform[i + halfWindowSize]
+			windowSize += 1
+		elif numSamples - i <= halfWindowSize:
+			windowSum -= waveform[i - halfWindowSize]
+			windowSize -= 1
+		else:
+			windowSum += waveform[i + halfWindowSize]
+			windowSum -= waveform[i - halfWindowSize]
 
-		if i < numSamples - halfWindowSize:
-			windowSize -= (numSamples - i + 1)
-
-		variances.append(waveform[i] - (secondWindowSum / windowSize))
-
-		if i >= halfWindowSize:
-			secondWindowSum -= waveform[i - halfWindowSize]
-
-		if i < numSamples - halfWindowSize:
-			secondWindowSum += waveform[i + halfWindowSize]
+		variances.append(abs(waveform[i] - (windowSum / windowSize)))
 
 	return variances
 
@@ -73,7 +67,7 @@ def testVarience():
 	variances = getVariances(averagedWaveform, sampleRate)
 	return variences
 
-
+# output is total energy for each bandwidth and frequency with max energy
 def chunkBandwidthEnergies(waveform, sampleRate):
 	bandwidthEnergies = []
 
@@ -103,17 +97,21 @@ def chunkBandwidthEnergies(waveform, sampleRate):
 			maxAmp = max(maxAmp, amp)
 			if maxAmp == amp:
 				maxFreq = freqs[j]
+
+		chunkEnergies.append(binTotal)
+
+		chunkEnergies.append(ceil(maxFreq))
 		bandwidthEnergies.append(chunkEnergies)
-		bandwidthEnergies.append(maxFreq)
 	return bandwidthEnergies
 
 # pass in a second's worth of data
+# ouput is array for variance of each of the bands and the difference in peak frequency
 def getBandwidthVariance(dataSet, sampleRate):
 	numSamples = len(dataSet)
 	bands = len(breakFrequencies)
 	chunksPerSecond = int(floor(sampleRate/chunkSize))
 
-	halfWindowSize =  int(floor(chunksPerSecond/2))
+	halfWindowSize =  int(ceil(chunksPerSecond/2))
 
 	# building first half window
 	secondWindowSum = [0] * bands
@@ -140,6 +138,8 @@ def getBandwidthVariance(dataSet, sampleRate):
 
 			if i < numSamples - halfWindowSize:
 				secondWindowSum[j] += dataSet[i + halfWindowSize][j]
+		peakFrequencyDiff = abs(dataSet[i][-1] - dataSet[i+1][-1]) if i != numSamples - 1 else abs(dataSet[i-1][-1] - dataSet[i][-1])
+		bandVariance.append(peakFrequencyDiff)
 		variances.append(bandVariance)
 	return variances
 
@@ -149,16 +149,27 @@ def testBandWidthVariences(waveform):
 	averages = chunkBandwidthEnergies(waveform, sampleRate)
 	variances = getBandwidthVariance(averages)
 
-
 def getFeatures(filename):
 	waveform, sampleRate, bitsPerSample = wavParser.getRawWaveData(filename)
 	summedWaveform = sumChannels(waveform)
-	# averagedWaveform = chunkDataAverage(summedWaveform)
-	# variances = getVariances(averagedWaveform, sampleRate)
-	bandwidthAverages = chunkBandwidthEnergies(summedWaveform, sampleRate)
-	print bandwidthAverages[0]
-	print summedWaveform[0]
-	# bandwidthAverages = getBandwidthVariance(bandwidthAverages, sampleRate)
+	print len(summedWaveform)
+	averagedWaveform = chunkDataAverage(summedWaveform)
+	print len(averagedWaveform)
+	variances = getVariances(averagedWaveform, sampleRate)
+	print len(variances)
+	bandwidthEnergies = chunkBandwidthEnergies(summedWaveform, sampleRate)
+	print len(bandwidthEnergies)
+	bandwidthVariance = getBandwidthVariance(bandwidthEnergies, sampleRate)
+	print len(bandwidthVariance)
+
+	if len(variances) != len(bandwidthVariance):
+		sys.exit("Something has gone horribly wrong")
+
+	vals = []
+	for i in range(0, len(variances)):
+		vals.append([variances[i]] + bandwidthVariance[i])
+
+	print vals[1]
 
 
 getFeatures("Ltheme2.wav")
