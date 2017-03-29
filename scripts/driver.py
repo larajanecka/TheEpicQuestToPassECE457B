@@ -50,6 +50,7 @@ def main():
     )
 
     # 2. Train each neural network
+    logging.info('Training neural networks')
     song_limit = 1
     for i, w in enumerate(wavutil.get_wav_files(dataset_dir)):
         logging.info("Retrieved {}".format(w.absoluteName))
@@ -82,35 +83,41 @@ def main():
         #    )
 
     # 3. Predict, graph 
-    graph_limit = 5
+    logging.info('Generating predictions and graphs..."')
+    graph_limit = 1
     for i, w in enumerate(wavutil.get_wav_files(dataset_dir)):
+        logging.info('Generating graph for {}'.format(w.songName))
+        if i >= graph_limit:
+            break
         features, chunk_size = featureExtractor.getFeatures(w.absoluteName)
         preds = model.predict(numpy.array(features))
 
-        plt.figure(1)
+        logging.info('Generating waveform graph')
+        plt.figure()
         # Waveform amplitudes per feature
-        ratio = len(w.waveform) / preds
+        ratio = len(w.waveform) / len(preds)
+        logging.info('{} {} {}'.format(len(w.waveform), ratio, w.samplingRate))
         plt.plot(
-            [ k / w.samplingRate for k in xrange(0, len(waveform)) ],
-            w.waveform,
-            'b'
+            [ k / w.samplingRate for k in xrange(0, len(w.waveform), 10000000) ],
+            [ l for o, l in enumerate(w.waveform) if o % 100000000 == 0 ],
+            'ro'
         )
-        plt.plot(
-            [ k * ratio for k in xrange(0, len(features)) ],
-            preds
-            ,'r'
-        )
+        #plt.plot(
+        #    [ k * ratio for k in xrange(0, len(features)) ],
+        #    preds
+        #    ,'r'
+        #)
         plt.savefig('graphs/{}_waveform.png'.format(w.songName))
 
+        logging.info('Generating beats graph...')
         plt.figure()
-        plt.plot(w.beats, [ 1.0 for w in beats ], 'ro')
-        plt.savefig('graphs/{}_beats.png'.format(w.songName))
+        ply.ylim([0, 2])
+        plt.xlim([0, w.beats[-1] / 50])
+        for b in w.beats:
+            plt.axvline(x=b, color='k', linewidth=1)
+        #plt.plot(w.beats, [ 1.0 for k in w.beats ], 'b')
+        plt.savefig('graphs/LOLWOT{}_beats.png'.format(w.songName))
 
-        if i >= graph_limit:
-            break
-
-
-
-
+        
 if __name__ == "__main__":
     main()

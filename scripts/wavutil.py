@@ -11,7 +11,7 @@ def get_wav_file(wav_file_name, beat_file_name):
         beats = [ float(b) for b in beat_file.readline().rstrip().split(",") ] 
 
     waveform, samplingRate, bitsPerSample = wav.getRawWaveData(wav_file_name)
-    song_name = wav_file_name[:len(wav_file_name) - 4]
+    song_name = wav_file_name[:len(wav_file_name) - 4].split('/')[-1]
     return WavFile(song_name, wav_file_name, waveform, samplingRate, bitsPerSample, beats) 
 
 # A generator for retrieving files 
