@@ -1,4 +1,5 @@
 import glob
+import matplotlib.pyplot as plt
 import numpy as np
 import threading
 import wavParser as wav
@@ -18,7 +19,9 @@ def get_wav_file(wav_file_name, beat_file_name):
     samplingRate = wfile.getframerate()
     frames = wfile.readframes(-1)
     print 'SIZE', len(frames)
-    print 'FRAMES', np.fromstring(frames, 'Int16')[0]
+    print 'FRAMES', np.fromstring(frames, 'Int16')
+    plt.plot(np.fromstring(frames, 'Int16')[0:200000])
+    plt.show()
     #bitsPerSample = 
 
     return WavFile(song_name, wav_file_name, waveform, samplingRate, bitsPerSample, beats) 
