@@ -4,7 +4,7 @@ import random
 # period - the length of time (s) for each timeframe
 # Args
 #  - beats = [0.4, 0.0, 0.1, 0.7] (probability of a beat per timeframe)
-#  - period = 0.5 (for a song of 2s)
+#  - period = 0.5 (time in seconds per beat)
 def predict_steps(beats, period):
     # Return the times when steps occur
     steps = []
@@ -20,8 +20,8 @@ def predict_steps(beats, period):
     # Calculate the probability a given beat is a step given the probability
     # the time is a beat and the time since the last step
     for b in beats:
-        last_step = steps[-1] if len(steps) > 0 else 0 
-        last_step_probability = probability_of_step(last_step, b)
+        last_step_time = len(steps)*period if len(steps) > 0 else 0 
+        last_step_probability = probability_of_step(last_step_time, b)
         probability = b * last_step_probability
         if random.uniform(0.0, 1.0) <= probability:
             steps.append(1.0)
