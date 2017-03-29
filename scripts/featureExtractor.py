@@ -8,18 +8,28 @@ import matplotlib.pyplot as plt
 # change aggregation functions to have overlap
 
 # Size of the chunk to aggregate
-chunkSize = 441
+chunkSize = 147
 # Frequency bands
 breakFrequencies = [200,400,800,1600,3200]
 
 
 # sum channels
-def sumChannels(waveform):
+def summedPower(waveform, bitsPerSample):
 	summed = []
 	for i in range(0, len(waveform[0])):
 		total = 0
 		for k in range(0, len(waveform)):
-			total += waveform[k][i]**2
+			total += (waveform[k][i] - 2**(bitsPerSample-1))**2
+		summed.append(total)
+	return summed
+
+
+def sumChannels(waveform, bitsPerSample):
+	summed = []
+	for i in range(0, len(waveform[0])):
+		total = 0
+		for k in range(0, len(waveform)):
+			total += waveform[k][i] - 2**(bitsPerSample-1)
 		summed.append(total)
 	return summed
 
@@ -151,16 +161,17 @@ def testBandWidthVariences(waveform):
 
 def getFeatures(filename):
 	waveform, sampleRate, bitsPerSample = wavParser.getRawWaveData(filename)
-	summedWaveform = sumChannels(waveform)
-	print len(summedWaveform)
+	summedWaveform = summedPower(waveform, bitsPerSample)
+	# print len(summedWaveform)
 	averagedWaveform = chunkDataAverage(summedWaveform)
-	print len(averagedWaveform)
+	# print len(averagedWaveform)
 	variances = getVariances(averagedWaveform, sampleRate)
-	print len(variances)
+	# print len(variances)
+	summedWaveform = sumChannels(waveform, bitsPerSample)
 	bandwidthEnergies = chunkBandwidthEnergies(summedWaveform, sampleRate)
-	print len(bandwidthEnergies)
+	# print len(bandwidthEnergies)
 	bandwidthVariance = getBandwidthVariance(bandwidthEnergies, sampleRate)
-	print len(bandwidthVariance)
+	# print len(bandwidthVariance)
 
 	if len(variances) != len(bandwidthVariance):
 		sys.exit("Something has gone horribly wrong")
@@ -169,7 +180,7 @@ def getFeatures(filename):
 	for i in range(0, len(variances)):
 		vals.append([variances[i]] + bandwidthVariance[i])
 
-	print vals[1]
+	return vals
 
 
 getFeatures("Ltheme2.wav")
