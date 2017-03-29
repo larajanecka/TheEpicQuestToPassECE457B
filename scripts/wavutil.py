@@ -11,7 +11,8 @@ def get_wav_file(wav_file_name, beat_file_name):
         beats = [ float(b) for b in beat_file.readline().rstrip().split(",") ] 
 
     waveform, samplingRate, bitsPerSample = wav.getRawWaveData(wav_file_name)
-    return WavFile(wav_file_name, waveform, samplingRate, bitsPerSample, beats) 
+    song_name = wav_file_name[:len(wav_file_name) - 4]
+    return WavFile(song_name, wav_file_name, waveform, samplingRate, bitsPerSample, beats) 
 
 # A generator for retrieving files 
 def get_wav_files(directory):
@@ -27,7 +28,8 @@ def get_wav_files(directory):
 # A class representing all necessary information from a WavFile
 BEAT_ERROR = 0.3
 class WavFile():
-    def __init__(self, absoluteName, waveform, samplingRate, bitsPerSample, beats):
+    def __init__(self, songName, absoluteName, waveform, samplingRate, bitsPerSample, beats):
+        self.songName = songName
         self.absoluteName = absoluteName
         self.waveform = waveform
         self.samplingRate = samplingRate
@@ -45,7 +47,7 @@ class WavFile():
             mid = (i + j) // 2
             beat_time = self.beats[mid]
 
-            if abs(time - beat_time) <= 0.3:
+            if abs(time - beat_time) <= 0.005:
                 return True
             else:
                 if time < self.beats[j]:
