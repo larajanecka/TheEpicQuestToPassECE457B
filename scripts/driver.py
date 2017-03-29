@@ -4,16 +4,15 @@ import sys
 import wavutil
 
 def usage():
-    pass
+    print "python driver.py <dataset_directory>"
 
 def main():
-    out = 
-    # 1. 
+    dataset_dir = sys.argv[1]
 
+    for w in wavutil.get_wav_files(dataset_dir):
+        print w
+        break
 
-    # 2.
-
-    pass
 
 if __name__ == "__main__":
     main()
