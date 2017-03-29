@@ -11,6 +11,8 @@ import numpy
 import bpl
 import featureExtractor
 import wavutil
+import wavParser
+
 
 def usage():
     print "python driver.py <dataset_directory>"
@@ -53,6 +55,9 @@ def main():
     logging.info('Training neural networks')
     song_limit = 1
     for i, w in enumerate(wavutil.get_wav_files(dataset_dir)):
+        import wave
+        print wave.open(w.absoluteName, 'r').getparams()
+
         logging.info("Retrieved {}".format(w.absoluteName))
 
         # Features, Samples
@@ -96,10 +101,12 @@ def main():
         plt.figure()
         # Waveform amplitudes per feature
         ratio = len(w.waveform) / len(preds)
-        logging.info('{} {} {}'.format(len(w.waveform), ratio, w.samplingRate))
+        for u in w.waveform:
+            print len(u)
+        logging.info('{}-{}-{}'.format(len(w.waveform[0]), ratio, w.samplingRate))
         plt.plot(
-            [ k / w.samplingRate for k in xrange(0, len(w.waveform), 10000000) ],
-            [ l for o, l in enumerate(w.waveform) if o % 100000000 == 0 ],
+            [ float(k) / float(w.samplingRate) for k in xrange(0, len(w.waveform[0]), 100) ],
+            [ l for o, l in enumerate(w.waveform[0]) if o % 100 == 0 ],
             'ro'
         )
         #plt.plot(
@@ -111,12 +118,12 @@ def main():
 
         logging.info('Generating beats graph...')
         plt.figure()
-        ply.ylim([0, 2])
+        plt.ylim([0, 2])
         plt.xlim([0, w.beats[-1] / 50])
         for b in w.beats:
             plt.axvline(x=b, color='k', linewidth=1)
         #plt.plot(w.beats, [ 1.0 for k in w.beats ], 'b')
-        plt.savefig('graphs/LOLWOT{}_beats.png'.format(w.songName))
+        plt.savefig('graphs/{}_beats.png'.format(w.songName))
 
         
 if __name__ == "__main__":

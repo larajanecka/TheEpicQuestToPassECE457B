@@ -1,7 +1,8 @@
 import glob
+import numpy as np
 import threading
 import wavParser as wav
-
+import wave
 
 # Extract beats from file. Use first beat interpretation as correct though
 # there are 10-11. TODO: Is there a better way?
@@ -12,7 +13,18 @@ def get_wav_file(wav_file_name, beat_file_name):
 
     waveform, samplingRate, bitsPerSample = wav.getRawWaveData(wav_file_name)
     song_name = wav_file_name[:len(wav_file_name) - 4].split('/')[-1]
+    
+    wfile = wave.open(wav_file_name, 'r')
+    samplingRate = wfile.getframerate()
+    frames = wfile.readframes(-1)
+    print 'SIZE', len(frames)
+    print 'FRAMES', np.fromstring(frames, 'Int16')[0]
+    #bitsPerSample = 
+
     return WavFile(song_name, wav_file_name, waveform, samplingRate, bitsPerSample, beats) 
+
+t,u,v =  wav.getRawWaveData('./POSSESSION.wav')
+print len(t), len(t[0]) 
 
 # A generator for retrieving files 
 def get_wav_files(directory):
