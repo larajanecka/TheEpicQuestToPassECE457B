@@ -26,4 +26,4 @@ def predict_steps(beats, period):
         else
             steps.append(0.0)
 
-   return steps 
+    return steps 

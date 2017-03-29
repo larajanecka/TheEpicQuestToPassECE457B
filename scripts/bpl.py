@@ -8,7 +8,8 @@ class ActivationFunction(object):
 
 	@classmethod
 	def getSigmoid(self, value):
-		return 1 / (1 + math.exp(-value))
+                print value
+		return 1 / (1 + math.exp(-1 * value))
 		# if value > 0:
 		# 	return 1
 		# else:

@@ -151,6 +151,7 @@ def testBandWidthVariences(waveform):
 
 def getFeatures(filename):
 	waveform, sampleRate, bitsPerSample = wavParser.getRawWaveData(filename)
+        chunk_size = sampleRate / 300
 	summedWaveform = sumChannels(waveform)
 	print len(summedWaveform)
 	averagedWaveform = chunkDataAverage(summedWaveform)
@@ -168,6 +169,8 @@ def getFeatures(filename):
 	vals = []
 	for i in range(0, len(variances)):
 		vals.append([variances[i]] + bandwidthVariance[i])
+
+        return vals, chunk_size
 
 	print vals[1]
 
