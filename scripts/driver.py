@@ -3,7 +3,7 @@ import logging
 import sys
 
 from keras.models import Sequential
-from keras.layers import Dense, Activation
+from keras.layers import Dense, Activation, LSTM
 from keras.optimizers import SGD
 import matplotlib.pyplot as plt
 import numpy
@@ -15,7 +15,10 @@ import wavParser
 
 
 def usage():
-    print "python driver.py <dataset_directory>"
+    print "python driver.py <dataset_directory> <graph_directory>"
+    print "<dataset-directory> : Directory containing beats, wav files"
+    print "<graph_directory> : Where to output generated graphs"
+    exit(1)
 
 # Generate a MultiLayerPerceptron neural network
 def getMLP():
@@ -25,11 +28,16 @@ def getMLP():
             200,
             activation="relu",
             input_dim=7,
-            init="uniform",
-    #        weights=[10*numpy.random.randn(1, 200), 10*numpy.random.randn(200)]
+            kernel_initializer="uniform",
         )
     )
-    model.add(Dense(1, init='uniform', activation='sigmoid'))
+    model.add(
+        Dense(
+            1, 
+            kernel_initializer='uniform',
+            activation='sigmoid'
+        )
+    )
     sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
     model.compile(
         loss='mean_squared_error',
@@ -40,15 +48,28 @@ def getMLP():
     return model
 
 # Generate a recurrent neural network
+# TODO
 def getRNN():
     model = Sequential()
+    model.add(LSTM(4, input_dim=7))
+    model.add(Dense(1))
+    model.compile(loss='mean_squared_error', optimizer='adam')
     return model 
 
 def main():
     logging.basicConfig(level=logging.INFO)
+    if len(sys.argv) < 3:
+        usage()
+
     dataset_dir = sys.argv[1]
+    graph_dir = sys.argv[2]
 
     # 1. Create neural networks
+    keras_models = [
+        ('MLP', getMLP()),
+    #    ('RNN', getRNN())
+    ]
+
     model = getMLP()
     mlp_network = bpl.BPM(
         width = 10,
@@ -71,84 +92,79 @@ def main():
         samples = [
             1.0 if w.isBeat(i * 0.03) else 0.0 for i,f in enumerate(features)
         ]
-
-        model.fit(
-            numpy.array(features),
-            numpy.array([
-                1.0 if w.isBeat(i * 0.03) else 0.0 for i,f in enumerate(features)
-            ]),
-            epochs=100,
-            batch_size=30
-        )
+        
+        for m in keras_models:
+            m[1].fit(
+                numpy.array(features),
+                numpy.array([
+                    1.0 if w.isBeat(i * 0.03) else 0.0 for i,f in enumerate(features)
+                ]),
+                epochs=100,
+                batch_size=30
+            )
     
         # Train Mike's MLP
-        for i, f in enumerate(features):
-            print len(f)
-            mlp_network.iterate(
-                f,
-                1.0 if w.isBeat(i * 0.03) else 0.0
-            )
+        #for i, f in enumerate(features):
+        #    print len(f)
+        #    mlp_network.iterate(
+        #        f,
+        #        1.0 if w.isBeat(i * 0.03) else 0.0
+        #    )
 
     # 3. Serialize Neural networks
     model.save('models/keras_mlp.h5')
 
-    # 4. Predict, graph 
+    # 4. Predict beats, graph 
     logging.info('Generating predictions and graphs..."')
     graph_limit = 5
     for i, w in enumerate(wavutil.get_wav_files(dataset_dir)):
-        logging.info('Generating graph for {}'.format(w.songName))
         if i >= graph_limit:
             break
-
-        # 
-        features, chunk_size = featureExtractor.getFeatures(w.absoluteName)
-        preds = model.predict(numpy.array(features))
-        preds2 = mlp_network.getMembershipFromSong(features)
-        print 'Mikes preds'
-        for i, p in enumerate(preds):
-            print i, p
-
-
-
-        
-
-        # Amplitude graph
-        logging.info('Generating waveform graph')
-        plt.figure()
-        ratio = float(len(w.waveform[0])) / float(len(preds))
-        logging.info('{}-{}-{}'.format(len(w.waveform[0]), ratio, w.samplingRate))
-        for c in xrange(0, len(w.waveform)):
-            plt.plot(
-                [ x for x in xrange(0, len(w.waveform[c]), 1000) ],
-                [ w.waveform[c][y] for y in xrange(0, len(w.waveform[c]), 1000) ],
+        logging.info('Generating graphs for {}...'.format(w.songName))
+        for m in keras_models:    
+            features, chunk_size = featureExtractor.getFeatures(w.absoluteName)
+            preds = m[1].predict(numpy.array(features))
+            loss, accuracy = m[1].evaluate(
+                numpy.array(features),
+                numpy.array([
+                    1.0 if w.isBeat(i * 0.03) else 0.0 for i,f in enumerate(features)
+                ]),
             )
-        plt.savefig('graphs/{}_waveform.png'.format(w.songName))
-       
-        # Beats graph
-        logging.info('Generating beats graph...')
-        plt.figure()
-        plt.ylim([0, 2])
-#        plt.xlim([0, len(preds)])#w.beats[-1]])
+            print loss
+            print accuracy
+   
+            # Generate amplitude graph
+            logging.info('Generating waveform graph for \'{}\'...'.format(w.songName))
+            plt.figure()
+            plt.suptitle('Waveform for \'{}\''.format(w.songName))
+            for c in xrange(0, len(w.waveform)):
+                plt.plot(
+                    [ x for x in xrange(0, len(w.waveform[c]), 1000) ],
+                    [ w.waveform[c][y] for y in xrange(0, len(w.waveform[c]), 1000) ],
+                )
+            plt.savefig('{}{}_waveform.png'.format(graph_dir, m[0] + '-' + w.songName))
+           
+            # Generate Beats graph
+            logging.info('Generating beats graph for \'{}\'...'.format(w.songName))
+            ratio = float(len(w.waveform[0])) / float(len(preds))
+            plt.figure()
+            plt.suptitle('{} - Actual vs. Predicted beats for \'{}\''.format(m[0], w.songName))
+            plt.ylim([0, 2])
+            plt.xlim([w.beats[len(w.beats) / 2]*w.samplingRate , w.beats[-1]*w.samplingRate])
+            for b in w.beats:
+                plt.axvline(x=b*w.samplingRate, linewidth=0.3, linestyle='solid')
 
-        for b in w.beats:
-            print b*w.samplingRate
-            plt.axvline(x=b*w.samplingRate, linewidth=0.1, linestyle='solid')
+            y = [ p[0] for p in preds ]
+            l1, = plt.plot(
+                [ k * ratio for k in xrange(0, len(preds))],
+                [ p[0] for p in preds ],
+                'r',
+                linewidth=0.3,
+                label='Predicted beats'
+            )
+            plt.legend(handles=[l1])
 
-        y = [ p[0] for p in preds ]
-        for k in xrange(0, len(preds), 10):
-            print k*ratio, preds[k][0]
-        print len(w.beats), len(preds)
-        plt.plot(
-#            [ k / w.samplingRate for 1k in xrange(0, len(preds))],
-            [ k * ratio for k in xrange(0, len(preds))],
-            [ p[0] for p in preds ],
-            'r'
-        )
+            plt.savefig('{}{}_beats.png'.format(graph_dir, m[0] + '-' + w.songName))
 
-        #plt.plot(w.beats, [ 1.0 for k in w.beats ], 'b')
-        plt.savefig('graphs/{}_beats.png'.format(w.songName))
-        exit()
-
-        
 if __name__ == "__main__":
     main()

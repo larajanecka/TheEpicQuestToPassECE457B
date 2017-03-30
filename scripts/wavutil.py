@@ -13,7 +13,6 @@ def get_wav_file(wav_file_name, beat_file_name):
     with open(beat_file_name, "r") as beat_file:
         beats = [ float(b) for b in beat_file.readline().rstrip().split(",") ] 
 
-    waveform, samplingRate, bitsPerSample = wav.getRawWaveData(wav_file_name)
     song_name = wav_file_name[:len(wav_file_name) - 4].split('/')[-1]
 
     # WAV file metadata
@@ -23,22 +22,13 @@ def get_wav_file(wav_file_name, beat_file_name):
     samplingRate = wfile.getframerate()
     wfile.close()
 
-    # WAV file samples
+    # WAV file channels
     rate, data = wavfile.read(wav_file_name)
     waveform = [
         data[:, c] for c in xrange(0, wfile.getnchannels())
     ]
 
-    #print 'Length of each waveform (scipy)', len(data[:, 0])
-    #plt.plot(
-    #    [ x for x in xrange(0, len(waveform[0]), 1000) ],
-    #    [ waveform[0][y] for y in xrange(0, len(waveform[0]), 1000) ]
-    #)
-    plt.show()
     return WavFile(song_name, wav_file_name, waveform, samplingRate, bitsPerSample, beats) 
-
-t,u,v =  wav.getRawWaveData('./POSSESSION.wav')
-print len(t), len(t[0]) 
 
 # A generator for retrieving files 
 def get_wav_files(directory):
@@ -48,8 +38,6 @@ def get_wav_files(directory):
         beat_file = wav_file[:len(wav_file) - 4] + ".beats"
         wav_object = get_wav_file(wav_file, beat_file)
         yield wav_object
-
-
 
 # A class representing all necessary information from a WavFile
 BEAT_ERROR = 0.3

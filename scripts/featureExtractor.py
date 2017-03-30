@@ -153,15 +153,15 @@ def getFeatures(filename):
 	waveform, sampleRate, bitsPerSample = wavParser.getRawWaveData(filename)
         chunk_size = sampleRate / 300
 	summedWaveform = sumChannels(waveform)
-	print len(summedWaveform)
+	#print len(summedWaveform)
 	averagedWaveform = chunkDataAverage(summedWaveform)
-	print len(averagedWaveform)
+	#print len(averagedWaveform)
 	variances = getVariances(averagedWaveform, sampleRate)
-	print len(variances)
+	#print len(variances)
 	bandwidthEnergies = chunkBandwidthEnergies(summedWaveform, sampleRate)
-	print len(bandwidthEnergies)
+	#print len(bandwidthEnergies)
 	bandwidthVariance = getBandwidthVariance(bandwidthEnergies, sampleRate)
-	print len(bandwidthVariance)
+	#print len(bandwidthVariance)
 
 	if len(variances) != len(bandwidthVariance):
 		sys.exit("Something has gone horribly wrong")
@@ -171,8 +171,6 @@ def getFeatures(filename):
 		vals.append([variances[i]] + bandwidthVariance[i])
 
         return vals, chunk_size
-
-	print vals[1]
 
 
 getFeatures("Ltheme2.wav")
