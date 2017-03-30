@@ -142,7 +142,7 @@ def main():
                     [ x for x in xrange(0, len(w.waveform[c]), 1000) ],
                     [ w.waveform[c][y] for y in xrange(0, len(w.waveform[c]), 1000) ],
                 )
-            plt.savefig('{}{}_waveform.png'.format(graph_dir, m[0] + '-' + w.songName))
+            plt.savefig('{}{}_waveform.png'.format(graph_dir, m[0] + '-' + w.songName), format='png', dpi=1200)
            
             # Generate Beats graph
             logging.info('Generating beats graph for \'{}\'...'.format(w.songName))
@@ -164,7 +164,7 @@ def main():
             )
             plt.legend(handles=[l1])
 
-            plt.savefig('{}{}_beats.png'.format(graph_dir, m[0] + '-' + w.songName))
+            plt.savefig('{}{}_beats.eps'.format(graph_dir, m[0] + '-' + w.songName), format='eps', dpi=1200)
 
 if __name__ == "__main__":
     main()
