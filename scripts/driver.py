@@ -17,6 +17,7 @@ import wavParser
 def usage():
     print "python driver.py <dataset_directory>"
 
+# Generate a MultiLayerPerceptron neural network
 def getMLP():
     model = Sequential()
     model.add(
@@ -37,6 +38,11 @@ def getMLP():
     )
 
     return model
+
+# Generate a recurrent neural network
+def getRNN():
+    model = Sequential()
+    return model 
 
 def main():
     logging.basicConfig(level=logging.INFO)
@@ -84,7 +90,7 @@ def main():
             )
 
     # 3. Serialize Neural networks
-    #model.save('models/keras_mlp.h5')
+    model.save('models/keras_mlp.h5')
 
     # 4. Predict, graph 
     logging.info('Generating predictions and graphs..."')
@@ -93,8 +99,18 @@ def main():
         logging.info('Generating graph for {}'.format(w.songName))
         if i >= graph_limit:
             break
+
+        # 
         features, chunk_size = featureExtractor.getFeatures(w.absoluteName)
         preds = model.predict(numpy.array(features))
+        preds2 = mlp_network.getMembershipFromSong(features)
+        print 'Mikes preds'
+        for i, p in enumerate(preds):
+            print i, p
+
+
+
+        
 
         # Amplitude graph
         logging.info('Generating waveform graph')
