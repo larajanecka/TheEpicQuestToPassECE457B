@@ -42,7 +42,7 @@ def getRawWaveData(filename):
 	# 1 Waveform for each channel.
 	for i in range(0, numChannels):
 		waveform.append([])
-        print 'lol', dataSize
+
 	with open(filename, 'rb') as f:
 		f.read(44)	# Skip meta data
 		for i in range(0, (dataSize * 8 / bitsPerSample) / numChannels):

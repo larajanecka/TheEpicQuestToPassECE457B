@@ -55,10 +55,9 @@ def main():
     logging.info('Training neural networks')
     song_limit = 1
     for i, w in enumerate(wavutil.get_wav_files(dataset_dir)):
-        import wave
-        print wave.open(w.absoluteName, 'r').getparams()
 
         logging.info("Retrieved {}".format(w.absoluteName))
+        sys.exit('lol')
 
         # Features, Samples
         features, chunk_size = featureExtractor.getFeatures(w.absoluteName)
