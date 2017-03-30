@@ -16,41 +16,25 @@ def get_wav_file(wav_file_name, beat_file_name):
     waveform, samplingRate, bitsPerSample = wav.getRawWaveData(wav_file_name)
     song_name = wav_file_name[:len(wav_file_name) - 4].split('/')[-1]
 
-    # Build WAV file
+    # WAV file metadata
     wfile = wave.open(wav_file_name, 'r')
     channels = [ [] for i in xrange(0, wfile.getnchannels()) ]
     bitsPerSample = wfile.getsampwidth() * 8
     samplingRate = wfile.getframerate()
-    frames = wfile.readframes(-1)
-    print "Length of each waveform (original)", len(waveform[0])
-    print "Length of each waveform (new)", (len(frames) / 2 ) / len(channels)
-    
+    wfile.close()
 
-
+    # WAV file samples
     rate, data = wavfile.read(wav_file_name)
     waveform = [
         data[:, c] for c in xrange(0, wfile.getnchannels())
     ]
 
-    print 'Length of each waveform (scipy)', len(data[:, 0])
-    #waveform = []
-    #for c in xrange(0, wfile.getnchannels()):
-    #    waveform.append([
-    #        int(f[::-1].encode('hex'), 16) for f in frames[c*2::bytesPerSample]
-    #    ])
-
-    #for i in xrange(0, 10):
-    #    assert waveform[0][i] == data[:,0][i]
-    print 'SIZE', len(frames)
-    print len(waveform)
-    print len(waveform[0])
-    plt.plot(
-        [ x for x in xrange(0, len(waveform[0]), 1000) ],
-        [ waveform[0][y] for y in xrange(0, len(waveform[0]), 1000) ]
-    )
+    #print 'Length of each waveform (scipy)', len(data[:, 0])
+    #plt.plot(
+    #    [ x for x in xrange(0, len(waveform[0]), 1000) ],
+    #    [ waveform[0][y] for y in xrange(0, len(waveform[0]), 1000) ]
+    #)
     plt.show()
-    #bitsPerSample = 
-
     return WavFile(song_name, wav_file_name, waveform, samplingRate, bitsPerSample, beats) 
 
 t,u,v =  wav.getRawWaveData('./POSSESSION.wav')
@@ -77,6 +61,7 @@ class WavFile():
         self.samplingRate = samplingRate
         self.bitsPerSample = bitsPerSample
         self.beats = beats
+        self.numframes = len(waveform[0])
 
     # Determine if a given time is a beat
     # Use binary search to determine if time is within ERROR of an actual beat
