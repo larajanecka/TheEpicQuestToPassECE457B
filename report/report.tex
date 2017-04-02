@@ -40,14 +40,11 @@ The files used for analysis were primarily wav files. To use another type of fil
 
 
 \subsection{Beat Detection}
-Notes:
-	\begin{itemize}
-		\item humans have temporal masking of about 3ms
-		\item humans hear frequency range of 20-20000Hz
-		\item humans have frequency accuracy to 3.6Hz
-		\item music contains sounds from 100-3200Hz (most often)
-	\end{itemize}
+Beat detection has been investigated by other groups, usually from an audio processing perspective. Most other groups have focused on finding a consistent pattern in the frequency of beats with the intention of extracting a beats per minute value. Values associated with human hearing can be used for approximation.
 
+Humans hearing has a temporal masking of about three miliseconds \cite{temporalmasking}. This was evaluated by playing a white noise and pausing the sound for a short amount of time to detect the longest range the pause could be before humans noticed it. This experiment found that this value varied with the pitch of the white noise being played and if the length of pause was increasing or decreasing. For the sake of this report the lowest possible value found by the report will be used and the human temporal masking threshold. This is the value at which data can be aggregated without a noticeable difference in sound. It also represents the finest granularity changes in a song can be heard. If a change in pitch or volume happens within three milliseconds of another change it will not be detected. This project aimed to keep its granularity in the range of three milliseconds to accommodate this value.
+
+Human hearing is sensitive to a wide range of frequencies, roughly from 20Hz to 20 000Hz\cite{frequencylimits}. Music tends to only inhabit the 100Hz to 4 000Hz. This is also the range of frequencies that human hearing is most sensitive to \cite{frequencylimits}. This project put emphasis on lower frequency sounds in its frequency related features due to the fact that humans tend to hear more beats on lower frequency sounds. Within these frequency ranges humans can listen without discomfort and hear most accurately with the ability to hear a difference in tones separated by as little as 3Hz \cite{frequencylimits}. These values heavily influenced how bandwidth ranges were divided.
 
 \section{Solution}
 
@@ -81,7 +78,7 @@ The averaged power of a chunk is then compared to the average power of the surro
 \end{align*}
 
 \subsubsection{Bandwidth Energy Variance}
-The power level of a song ignores the frequency aspect of audio processing. The frequency of sounds within a song heavily influence the placement of beats and thus cannot be ignored. To account for this a feature was added that breaks a chunk into frequencies and sums the energy within set bandwidth ranges. These ranges were pulled from a paper written by Eric Scheirer in which he attempted to detect beats in music using only frequency analysis. In it he outlined 5 bandwidth ranges to group by, 0-200Hz, 200-400Hz, 400-800Hz, 800-1600Hz, and 1600-3200Hz. Frequencies over 3200Hz were ignored as their prevalence in music is limited due to discomfort caused to listeners.
+The power level of a song ignores the frequency aspect of audio processing. The frequency of sounds within a song heavily influence the placement of beats and thus cannot be ignored. To account for this a feature was added that breaks a chunk into frequencies and sums the energy within set bandwidth ranges. These ranges were pulled from a paper written by Eric Scheirer in which he attempted to detect beats in music using only frequency analysis. In it he outlined 5 bandwidth ranges to group by, 0-200Hz, 200-400Hz, 400-800Hz, 800-1600Hz, and 1600-3200Hz\cite{bandwidthbreaks}. Frequencies over 3200Hz were ignored as their prevalence in music is limited due to discomfort caused to listeners.
 
 First the energy across channels is calculated to account for multichannel songs.
 \begin{align*}
@@ -129,6 +126,9 @@ The peak frequency for a chunk was found by calculating the energy for sample an
 \subsubsection{Recurrent Networks}
 
 
-\section{References}
+\newpage
+\bibliographystyle{unsrt}
+\bibliography{report}
+
 
 \end{document}
