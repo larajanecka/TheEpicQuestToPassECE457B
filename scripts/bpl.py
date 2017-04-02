@@ -6,15 +6,13 @@ class ActivationFunction(object):
 	def __init__(self):
 		pass
 
-        # Perform bounds checking to prevent overflow errors
 	@classmethod
 	def getSigmoid(self, value):
-                print value
-                if value > 6:
-                    return 1
-                if value < -6:
-                    return 0
-		return 1 / (1 + math.exp(-1 * value))
+		return 1 / (1 + math.exp(-value))
+		# if value > 0:
+		# 	return 1
+		# else:
+		# 	return 0
 
 	@classmethod
 	def getDerivativeSigmoid(self, value):
