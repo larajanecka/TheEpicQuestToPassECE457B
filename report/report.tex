@@ -1,6 +1,7 @@
 \documentclass[12pt]{article}
 
 \usepackage{fullpage,url,amssymb,epsfig,color,pdfpages,xspace,enumerate,multirow,enumitem,graphicx,amsmath}
+\usepackage{listings}
 \usepackage[pdftitle={ECE457b Project},%
 pdfsubject={University of Waterloo, ECE 457b, Winter 2017},%
 pdfauthor={Daniel Cardoza, Lara Janecka, Hong Wang}]{hyperref}
@@ -35,6 +36,8 @@ pdfauthor={Daniel Cardoza, Lara Janecka, Hong Wang}]{hyperref}
 The files used for analysis were primarily wav files. To use another type of file required conversion into a wav file. Wav files consist of a header containing relevant information such as sample rate and the number of channels, and the sound data for each sample. This format does not compress the data and thus was chosen of the most accurate results. A parser was written to extract the sample rate and a waveform for the sound data. The sample rate is the number of samples taken per second. For CD quality (the most common type of file looked at) this value is 44,100. The waveform is the list of data for the sound data at each sample point for each channel.
 
 \subsection{Stepmania Files}
+\input{stepmania_file.tex}
+
 
 \subsection{Beat Detection}
 Notes:
@@ -101,7 +104,9 @@ The peak frequency for a chunk was found by calculating the energy for sample an
 \subsection{Multilayer Perceptron}
 
 
-\subsection{That thing Dan did}
+\subsection{Dataset Construction and Format}
+
+\input{dataset_pipeline.tex}
 
 \section{Results}
 
