@@ -2,7 +2,7 @@
 import logging
 import sys
 
-from keras.models import Sequential
+from keras.models import Sequential, load_model
 from keras.layers import Dense, Activation, LSTM
 from keras.optimizers import SGD
 import matplotlib.pyplot as plt
@@ -15,12 +15,27 @@ import wavParser
 
 
 def usage():
-    print "python driver.py <dataset_directory> <graph_directory>"
+    print "python driver.py <dataset_directory> <graph_directory> [ <model_directory> ]"
     print "<dataset-directory> : Directory containing beats, wav files"
     print "<graph_directory> : Where to output generated graphs"
+    print "<model_directory> : Where to input neural models from"
     exit(1)
 
 # Generate a MultiLayerPerceptron neural network
+# Reasoning
+# Layer 1
+# - 200 nodes in first layer based on experiment. Yielded better accuracy than 20, 100
+# - input_dim : we have 7 features
+# - uniform : We do not favour one feature over the other
+# Layer 2
+# - sigmoid - We need the value to be between [0, 1.0]
+# SGD
+# - lr of 0.01 : If too high, we skip the optimal weight. If too small, it takes long to converge
+# - What that much decay?
+#
+# - Why that much momentum?
+# - Why nesterov momentum and not regular momentum?
+
 def getMLP():
     model = Sequential()
     model.add(
@@ -56,35 +71,14 @@ def getRNN():
     model.compile(loss='mean_squared_error', optimizer='adam')
     return model 
 
-def main():
-    logging.basicConfig(level=logging.INFO)
-    if len(sys.argv) < 3:
-        usage()
-
-    dataset_dir = sys.argv[1]
-    graph_dir = sys.argv[2]
-
-    # 1. Create neural networks
-    keras_models = [
-        ('MLP', getMLP()),
-    #    ('RNN', getRNN())
-    ]
-
-    model = getMLP()
-    mlp_network = bpl.BPM(
-        width = 10,
-        height = 5,
-        learningRate = 0.1,
-        dataSize = 7
-    )
-
-    # 2. Train each neural network
-    logging.info('Training neural networks')
-    song_limit = 5
+# Train given models. Store them in the model directory
+def train_models(keras_models, dataset_dir, model_dir):
+    song_limit = 300
     for i, w in enumerate(wavutil.get_wav_files(dataset_dir)):
         if i >= song_limit:
             break
-
+        
+        logging.info('Starting iteration {}...'.format(i))
         logging.info("Retrieved {}".format(w.absoluteName))
 
         # Features, Samples
@@ -99,7 +93,7 @@ def main():
                 numpy.array([
                     1.0 if w.isBeat(i * 0.03) else 0.0 for i,f in enumerate(features)
                 ]),
-                epochs=100,
+                epochs=10,
                 batch_size=30
             )
     
@@ -110,13 +104,42 @@ def main():
         #        f,
         #        1.0 if w.isBeat(i * 0.03) else 0.0
         #    )
+    for m in keras_models:
+        m[1].save('{}{}.h5'.format(model_dir, m[0]))
 
-    # 3. Serialize Neural networks
-    model.save('models/keras_mlp.h5')
+    return keras_models
+
+def main():
+    logging.basicConfig(level=logging.INFO)
+    if len(sys.argv) < 4:
+        usage()
+
+    dataset_dir = sys.argv[1]
+    graph_dir = sys.argv[2]
+
+    # 1. Create neural networks
+    keras_models = [
+        ('keras_MLP', getMLP()),
+    ]
+    if len(sys.argv) != 4:
+        # 2. Train, Serialize each model
+        logging.info('Training models...')
+        keras_models = train_models(keras_models, dataset_dir, 'models/')
+        mlp_network = bpl.BPM(
+            width = 10,
+            height = 5,
+            learningRate = 0.1,
+            dataSize = 7
+        )
+    else:
+        logging.info('Loading model from file...')
+        keras_models = [
+            ('keras_MLP', load_model(sys.argv[3]))
+        ]
 
     # 4. Predict beats, graph 
     logging.info('Generating predictions and graphs..."')
-    graph_limit = 5
+    graph_limit = 300
     for i, w in enumerate(wavutil.get_wav_files(dataset_dir)):
         if i >= graph_limit:
             break
@@ -130,8 +153,8 @@ def main():
                     1.0 if w.isBeat(i * 0.03) else 0.0 for i,f in enumerate(features)
                 ]),
             )
-            print loss
-            print accuracy
+            print 'LOSS', loss
+            print 'ACCURACY', accuracy
    
             # Generate amplitude graph
             logging.info('Generating waveform graph for \'{}\'...'.format(w.songName))
