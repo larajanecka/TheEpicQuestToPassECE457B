@@ -40,63 +40,12 @@ The files used for analysis were primarily wav files. To use another type of fil
 
 
 \subsection{Beat Detection}
-Beat detection has been investigated by other groups, usually from an audio processing perspective. Most other groups have focused on finding a consistent pattern in the frequency of beats with the intention of extracting a beats per minute value. Values associated with human hearing can be used for approximation.
-
-Humans hearing has a temporal masking of about three miliseconds \cite{temporalmasking}. This was evaluated by playing a white noise and pausing the sound for a short amount of time to detect the longest range the pause could be before humans noticed it. This experiment found that this value varied with the pitch of the white noise being played and if the length of pause was increasing or decreasing. For the sake of this report the lowest possible value found by the report will be used and the human temporal masking threshold. This is the value at which data can be aggregated without a noticeable difference in sound. It also represents the finest granularity changes in a song can be heard. If a change in pitch or volume happens within three milliseconds of another change it will not be detected. This project aimed to keep its granularity in the range of three milliseconds to accommodate this value.
-
-Human hearing is sensitive to a wide range of frequencies, roughly from 20Hz to 20 000Hz\cite{frequencylimits}. Music tends to only inhabit the 100Hz to 4 000Hz. This is also the range of frequencies that human hearing is most sensitive to \cite{frequencylimits}. This project put emphasis on lower frequency sounds in its frequency related features due to the fact that humans tend to hear more beats on lower frequency sounds. Within these frequency ranges humans can listen without discomfort and hear most accurately with the ability to hear a difference in tones separated by as little as 3Hz \cite{frequencylimits}. These values heavily influenced how bandwidth ranges were divided.
+\input{background-audio}
 
 \section{Solution}
 
 \subsection{Feature Extraction}
-Three kinds of features were used in the scope of this project. There were many other potentially useful features that could be extracted from audio files for use in beat detection, but many of them required complex audio processing beyond the knowledge of the authors of this report. This project focused on power variance, bandwidth power variance, and change in peak frequency. To accommodate for audio temporal masking in human hearing the sample rate was decreased to a sample every three milliseconds. This was done by aggregating samples into a chunk and comparing that with the other aggregated samples in its neighborhood. A chunk of data is the number of samples calculated to span three milliseconds of time.
-
-\begin{align*}
-	\text{chunk size} = c &= \frac{\text{number of samples}}{300}\\
-\end{align*}
-
-Each type of feature extraction generated data relative to the song it is in. This is due to the range of song genres considered in the scope of this project. Data comparisons using absolute values would confuse the training data when transitioning between songs, for example the electronic music has a much higher average frequency than dubstep. The solution to this was to compare features to a neighborhood of data to get relative values.
-
-Since most songs go through various phases in which the pitch, tempo, and power levels can be drastically different the neighborhood of comparison was limited to one seconds worth of data. This value was chosen because it was small enough to capture the changes in features while still being large enough to contain data about the current state of the song. One second is also the unit used when describing the tempo of a song when making a rough estimate. This allowed for a benchmark of what would be a reasonable number of beats in a second when comparing to the genre of the song.
-
-\subsubsection{Power Variance}
-The waveform of a sound file represents its data as energy levels within a channel at a given sample. The total power level of a sample can be calculated by summing the square over all channels in the waveform.
-
-\begin{align*}
- 	\text{Power}(x) &= \sum_j^{channels} x[j]^2
- \end{align*}
-
-Aggregation was done through averaging to lessen the number of samples being fed into the the network and to try to remove some of the noise within the signal.
-
-\begin{align*}
-	\text{Chunks}(x) &= \frac{\sum_{i=0}^{c}\text{Power}(x+i)}{c}
-\end{align*}
-The averaged power of a chunk is then compared to the average power of the surrounding second of data to account for different median power levels based on genre of song or mood at that moment within the song.
-
-\begin{align*}
-	\text{PowerVariance}[x] &= \text{Chunks}[x] - \frac{\sum_{i-150}^{i+150}\text{Chunks}[i]}{300}
-\end{align*}
-
-\subsubsection{Bandwidth Energy Variance}
-The power level of a song ignores the frequency aspect of audio processing. The frequency of sounds within a song heavily influence the placement of beats and thus cannot be ignored. To account for this a feature was added that breaks a chunk into frequencies and sums the energy within set bandwidth ranges. These ranges were pulled from a paper written by Eric Scheirer in which he attempted to detect beats in music using only frequency analysis. In it he outlined 5 bandwidth ranges to group by, 0-200Hz, 200-400Hz, 400-800Hz, 800-1600Hz, and 1600-3200Hz\cite{bandwidthbreaks}. Frequencies over 3200Hz were ignored as their prevalence in music is limited due to discomfort caused to listeners.
-
-First the energy across channels is calculated to account for multichannel songs.
-\begin{align*}
- 	\text{Energy}(x) &= \sum_j^{channels} x[j]
- \end{align*}
-
- The audio file is once again aggregated into chunks of roughly three milliseconds worth of data. The aggregation function is now a Discrete Fourier Transform. This was calculated using Python's SciPy library.
-
- \begin{align*}
- 	F[i] =  \texttt{scipy.fft}(Energy[i \dots i+chunkSize])
- \end{align*}
-
-The signals in F were divided into the above stated bandwidth ranges and their amplitudes summed. This represents the value of the cumulative power within each bandwidth range. These values were then compared to the surrounding second's worth of data using the same procedure as used when calculating the average power variance. This resulted in five values representing the power variance across the five bandwidth ranges for that chunk of data.
-
-\subsubsection{Peak Frequency Change}
-One of the biggest methods used by humans for identifying beats is to detect changes in the dominant frequency. This is used in the music genres aimed at dancing (the primary focus of this report was on such songs) to sync up crows by having frequent changes between a high pitched melody and a low pitched base line. An extreme example of this is a drop in typical dubstep songs. This feature most closely represents how humans intuitively detect beats.
-
-The peak frequency for a chunk was found by calculating the energy for sample and taking the Fast Fourier Transform of each chunk using the same procedure as used when calculating the bandwidth energy variance. The peak frequency was found by finding the highest amplitude within the chunk in question's data and taking the frequency at which it occurred. This value itself means very little since different song genres and within the songs the median frequency varies greatly. Unlike previous features, comparing the peak frequency to the surrounding second's worth of data would make little sense since the peak frequency varies greatly within a second. Instead, the peak frequency is compared only to the next value. This aims to identify only the instance of a sudden drop to try to refine beat identification.
+\input{solution-features}
 
 \subsection{Multilayer Perceptron}
 
