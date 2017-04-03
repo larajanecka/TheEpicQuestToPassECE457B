@@ -1,10 +1,8 @@
 \subsection{Introduction}
-
-Introduction
-The project proposed by the following abstract falls under Cluster 2, Pattern Recognition and
-Perception. The goal of Unlimited DR is to produce software that is able to generate DDR game
+The project proposed by the following abstract falls underneath Cluster 2 of the possible projects, \textbf{Pattern Recognition and
+Perception}. The goal of Ultimate DR is to produce software that is able to generate Dance Dance Revolution (DDR) game
 files using neural networks and fuzzy inferencing techniques.
-DDR (Dance Dance Revolution) is a video game under the genre of rhythm games. In the game,
+DDR is a video game under the genre of rhythm games. In the game,
 the player is presented with music and a sequence of arrows which they must press at an exact
 time. Typically, the game is played on a foot-pad where the player presses 4 arrows with their
 feet, which is akin to dancing to the music. Currently, DDR game files (SM files) are generated
@@ -25,22 +23,21 @@ software could be created to produce SM files from arbitrary songs, or arbitrary
 genre set, it can easily revitalize the DDR community.
 
 \subsection{Existing Data}
-The data used for this project will be existing pairs of song to step file mappings, which were
-done by the DDR community in the past. Substantial data repositories exist online and are free to
-download (and play). A simple web scraping strategy can be used to obtain the data to use for the
-project.
+The data used for this project will be pairs of audio files along with the beat data for the files. Substantial data repositories in the field of audioengineering analysis exist that contain this data.). A simple web scraping strategy or system can also be used to build this dataset. 
 
 \subsection{Project Strategy}
-Music files can always be decompressed to a WAV file format. A WAV file holds a sequence of
+Music files can always be decompressed to a wavelet or WAV file format. A WAV file holds a sequence of
 integers which each denote a single sample amplitude of the music’s waveform. The project
 implementation will first attempt to generate a set of music feature candidates by applying 
 various Digital Signal Processing techniques and perhaps even some randomized (but guided)
 functions to arbitrary samples of the waveform. Examples of music feature candidates include
 possible beats, note changes, or any seemingly relevant patterns found when processing the
 amplitude samples. The purpose of the music candidate feature generation is to create a broad set
-of possible music features that the step file makers used to create the step file. Fuzzy logic will
+of possible music features that the step file makers used to create the step file.\\
+
+Fuzzy logic will
 be implemented to determine whether or not a music feature candidate is indeed a relevant music
-feature used to generate the steps file. A neural network will be used to facilitate the evaluation
+feature used to generate the steps file. Each identified beat in a song does not always map to a step in a step file and fuzzy lgoci can be used to determine when it is. A neural network will be used to facilitate the evaluation
 of multiple features simultaneously, propagating the details of the feature if it is promising. The
 neural network implementation is also expected to compare music feature candidates and
 categorize them using fuzzy logic. The resulting neural network will then contain a rough

@@ -1,8 +1,8 @@
 \subsection{Overview}
 
-Stepmania is a cross-platform dance and rhythm game. Players select a song and corresponding leve of difficulty when playing. Then, players view a screen where up, down, left and right arrows rise up on the screen. When the arrow reaches a certain point, the user clicks the corresponding arrow key on their keyboard.\\
+Stepmania is a cross-platform dance and rhythm game. Players select a song and corresponding level of difficulty when playing. Then, players view a screen where up, down, left and right arrows rise up on the screen. When the arrow reaches a certain point, the user clicks the corresponding arrow key on their keyboard.\\
 
-Stepmania uses custom files containing necessary metadata and audio information. In the context of this project, each stepmania arrow corresponds to a different beat in the song being played. This makes the gaming experience more natural and enjoyable for the player. Our project seeks to perform beat detection, and then generate the corresponding Stepmania file with beats at the discrete times we detect. Note that a Stepmania file may only have steps for a subset of the beats in a song.\\
+Stepmania uses custom files containing necessary metadata and audio information. These are SM files, which are also used to play DDR. In the context of this project, each stepmania arrow corresponds to a different beat in the song being played. This makes the gaming experience more natural and enjoyable for the player. Our project seeks to perform beat detection, and then generate the corresponding Stepmania file with beats at the discrete times we detect. Note that a Stepmania file may only have steps for a subset of the beats in a song.\\
 
 \subsection{File Format}
 
@@ -24,4 +24,3 @@ An example of this beat information in the Stepmania file can be seen below:\\
 \end{lstlisting}
 
 In the context of our project, we seek to detect beats for a given song and generate a step file from this information. As well, since Stepmania files don't have a step for each beat, we implement a heuristic function that predicts if a beat is a step based on the time of the last step and the amount of beats that has occurred since the last step.\\
-

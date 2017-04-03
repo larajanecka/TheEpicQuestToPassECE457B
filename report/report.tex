@@ -13,7 +13,7 @@ pdfauthor={Daniel Cardoza, Lara Janecka, Hong Wang}]{hyperref}
 \vspace{1mm}
 {\Large\bf ECE457B Course Project, Winter 2017}\\
 \vspace{2mm}
-{\Large\bf Ultimate DDR}\\
+{\Large\bf Ultimate DR}\\
 \vspace{4mm}
 {Daniel Cardoza/dpmcardo/20471664}\\
 {Lara Janecka/lajaneck/20460089}\\
@@ -35,10 +35,9 @@ pdfauthor={Daniel Cardoza, Lara Janecka, Hong Wang}]{hyperref}
 \input{intro.tex}
 \pagebreak
 
-
 \section{Background}
 \subsection{Music Files}
-The files used for analysis were primarily wav files. To use another type of file required conversion into a wav file. Wav files consist of a header containing relevant information such as sample rate and the number of channels, and the sound data for each sample. This format does not compress the data and thus was chosen of the most accurate results. A parser was written to extract the sample rate and a waveform for the sound data. The sample rate is the number of samples taken per second. For CD quality (the most common type of file looked at) this value is 44,100. The waveform is the list of data for the sound data at each sample point for each channel.
+The files used for analysis were primarily Wav files. To use another type of file required conversion into a wav file. Wav files consist of a header containing relevant information such as sample rate and the number of channels, and the sound data for each sample. This format does not compress the data and thus was chosen of the most accurate results. A parser was written to extract the sample rate and a waveform for the sound data. The sample rate is the number of samples taken per second. For CD quality (the most common type of file looked at) this value is 44,100. The waveform is the list of data for the sound data at each sample point for each channel.
 
 \subsection{Stepmania Files}
 \input{stepmania_file.tex}
@@ -49,15 +48,15 @@ The files used for analysis were primarily wav files. To use another type of fil
 
 \section{Solution}
 \input{solution-intro}
+
 \subsection{Feature Extraction}
 \input{solution-features}
 
-\subsection{Multilayer Perceptron}
-\input{nn.tex}
-
-
 \subsection{Dataset Construction and Format}
 \input{dataset_pipeline.tex}
+
+\subsection{Multilayer Perceptron}
+\input{nn.tex}
 
 \section{Results}
 
@@ -84,9 +83,10 @@ The files used for analysis were primarily wav files. To use another type of fil
 \subsubsection{Fuzzy Matching}
 
 
-\newpage
-\bibliographystyle{unsrt}
+\pagebreak
 \bibliography{report}
+\bibliographystyle{plain}
+
 
 
 \end{document}
