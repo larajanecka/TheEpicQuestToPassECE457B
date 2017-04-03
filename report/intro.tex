@@ -6,8 +6,6 @@ The goal of this project is to create a system that automatically generates an a
 
 \subsection{Neural Network Component}
 
-TODO: Discuss how a MLP will work
+The neural network model used to perform beat detection will be a standard feedforward network. Specifically, a custom implementation of a Multilayer Perceptron with variable number of layers and nodes per layer will be created. This model will also use the sigmoid activation function and the online-updating rule for backpropagation. A custom implementation was desired in order to give us experience at implementing a feedforward network.\\
 
-\subsection{Fuzzy Logic Component}
-
-
+Also, a third party library will be used to implement another feedforward network in order to give us two models to compare. This second model will be similar to the first, and be built using the third party Keras machine learning library.

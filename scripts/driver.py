@@ -145,7 +145,7 @@ def main():
             break
         logging.info('Generating graphs for {}...'.format(w.songName))
         for m in keras_models:    
-            features, chunk_size = featureExtractor.getFeatures(w.absoluteName)
+            features = featureExtractor.getFeatures(w.absoluteName)
             preds = m[1].predict(numpy.array(features))
             loss, accuracy = m[1].evaluate(
                 numpy.array(features),
