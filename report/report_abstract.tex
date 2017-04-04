@@ -23,7 +23,7 @@ software could be created to produce SM files from arbitrary songs, or arbitrary
 genre set, it can easily revitalize the DDR community.
 
 \subsection{Existing Data}
-The data used for this project will be pairs of audio files along with the beat data for the files. Substantial data repositories in the field of audioengineering analysis exist that contain this data.). A simple web scraping strategy or system can also be used to build this dataset. 
+The data used for this project will be pairs of audio files along with the beat data for the files. Substantial data repositories in the field of audioengineering analysis exist that contain this data. A simple web scraping strategy or system can also be used to build this dataset. 
 
 \subsection{Project Strategy}
 Music files can always be decompressed to a wavelet or WAV file format. A WAV file holds a sequence of
@@ -37,7 +37,7 @@ of possible music features that the step file makers used to create the step fil
 
 Fuzzy logic will
 be implemented to determine whether or not a music feature candidate is indeed a relevant music
-feature used to generate the steps file. Each identified beat in a song does not always map to a step in a step file and fuzzy lgoci can be used to determine when it is. A neural network will be used to facilitate the evaluation
+feature used to generate the steps file. Each identified beat in a song does not always map to a step in a step file and fuzzy logic can be used to determine when it is. A neural network will be used to facilitate the evaluation
 of multiple features simultaneously, propagating the details of the feature if it is promising. The
 neural network implementation is also expected to compare music feature candidates and
 categorize them using fuzzy logic. The resulting neural network will then contain a rough

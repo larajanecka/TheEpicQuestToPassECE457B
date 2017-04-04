@@ -1,0 +1,18 @@
+\subsection{Overall Results}
+
+The findings of this report are inconclusive. Specifically, our two neural network models based on the multilayer perceptron were unable to properly predict
+when beats occurred. Thus, the StepMania files generated were not correct and not human useable. The accuracy of our best models were in the 60\% although the accuracy greatly varied between songs. The loss of our error function did decrease when each model was trained but a greater dataset is required to get better results.\\
+
+The features we extracted from audio files in order to train our model could be enhanced to be more indicative of when a beat occurs. This project used elementary digital signal processing and amplitude analysis to perform this, but more advanced techniques should exist. \\
+
+Overall, the implementation of this project provides a system allowing a researcher to produce an audio dataset along with beat metadata for each song. This allows our work to be extensible, with the majority of future work being in the realm of building a neural network more suited to our problem. 
+
+\subsection{Future Work, Research}
+
+\subsubsection{Recurrent Networks}
+
+As an alternative to regular feedforward neural networks are recurrent neural networks, where directed cycles can exist for paths through the network. Recurrent neural networks allow for the classification and regression of input vectors that are sequential in nature. Specifically, this allows the network to learn and fit input vectors, based on ones adjacent to each.\\
+
+In the context of our problem, this fits perfectly into the audio analysis we attempt to perform. Unlike our current solution which extracts features built by analyzing adjacent timeframes for a single one, this property would be inherent to a recurrent neural network. Specifically, the concept of \textbf{memory} being in the network itself rather than encoded in input vectors would be preferable and advantageous.
+
+
