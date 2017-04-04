@@ -1,0 +1,52 @@
+\subsection{Introduction}
+The project proposed by the following abstract falls underneath Cluster 2 of the possible projects, \textbf{Pattern Recognition and
+Perception}. The goal of Ultimate DR is to produce software that is able to generate Dance Dance Revolution (DDR) game
+files using neural networks and fuzzy inferencing techniques.
+DDR is a video game under the genre of rhythm games. In the game,
+the player is presented with music and a sequence of arrows which they must press at an exact
+time. Typically, the game is played on a foot-pad where the player presses 4 arrows with their
+feet, which is akin to dancing to the music. Currently, DDR game files (SM files) are generated
+manually by semi-professional or professional step makers. The step makers create the SM files
+by listening to the song and creatively conjuring a set of steps to match the music; the better
+the game steps matches the music, the more exciting the song is to play.
+
+
+\subsection{Motivation}
+The main problem with DDR as a game is the lack of SM files for a wide selection of songs. This
+is due to the fact that to generate each SM file, a step maker will need to spend around 4 hours.
+As the current demand for the game is not very high, the selection of songs for which step files
+exists is very low (compared to number of existing songs). This is a major blocker for new
+players to the game. A small study (outside the scope of this course) has been conducted to see
+why people are not willing to try DDR or why people new to DDR have quit reveals that the one
+driving factor to their patronage to the game is being able to play songs they love. Hence, if
+software could be created to produce SM files from arbitrary songs, or arbitrary songs from a
+genre set, it can easily revitalize the DDR community.
+
+\subsection{Existing Data}
+The data used for this project will be pairs of audio files along with the beat data for the files. Substantial data repositories in the field of audioengineering analysis exist that contain this data.). A simple web scraping strategy or system can also be used to build this dataset. 
+
+\subsection{Project Strategy}
+Music files can always be decompressed to a wavelet or WAV file format. A WAV file holds a sequence of
+integers which each denote a single sample amplitude of the music’s waveform. The project
+implementation will first attempt to generate a set of music feature candidates by applying 
+various Digital Signal Processing techniques and perhaps even some randomized (but guided)
+functions to arbitrary samples of the waveform. Examples of music feature candidates include
+possible beats, note changes, or any seemingly relevant patterns found when processing the
+amplitude samples. The purpose of the music candidate feature generation is to create a broad set
+of possible music features that the step file makers used to create the step file.\\
+
+Fuzzy logic will
+be implemented to determine whether or not a music feature candidate is indeed a relevant music
+feature used to generate the steps file. Each identified beat in a song does not always map to a step in a step file and fuzzy lgoci can be used to determine when it is. A neural network will be used to facilitate the evaluation
+of multiple features simultaneously, propagating the details of the feature if it is promising. The
+neural network implementation is also expected to compare music feature candidates and
+categorize them using fuzzy logic. The resulting neural network will then contain a rough
+relationship of which music features found in a WAV file relates to steps in the steps file. It can
+be then used to generate step files for a new WAV file.
+
+\subsection{Drawbacks}
+
+Potential drawbacks include having long algorithm running times. It is well known that some
+DSP algorithms are slow (especially when operating over long audio samples like a song) and
+adding feature candidate extracting will only increase run time. As well, this exact topic is not
+well explored in the industry and overwhelming success has not yet been reported.
